@@ -1,0 +1,29 @@
+{
+	"schemaVersion": 1,
+	"id": "tridentenchantmentsoverhaul",
+	"version": "${version}",
+	"name": "Trident Enchantments Overhaul",
+	"description": "Some improvements to trident enchantments",
+	"authors": [
+		"TheTizio"
+	],
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.tizio.tridentenchantmentsoverhaul.TridentEnchantmentsOverhaul"
+		]
+	},
+	"mixins": [
+      "tridentenchantmentsoverhaul.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.2",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
