@@ -1,11 +1,11 @@
 package com.tizio.tridentenchantmentsoverhaul.mixin;
 
+import com.tizio.tridentenchantmentsoverhaul.Config;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.ThrownTrident;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
@@ -29,24 +29,32 @@ public abstract class ImpalingChannelingRemoveLoyalty extends AbstractArrow {
 
     @Inject(at = @At("TAIL"), method = "onHitEntity")
     private void impalingChanneling(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if(EnchantmentHelper.getItemEnchantmentLevel(Enchantments.IMPALING,this.getPickupItem())>0) {
-            this.dealtDamage = false;
-            this.setDeltaMovement(this.getDeltaMovement().multiply(-100, -10, -100));
-        }
 
-        if (this.level() instanceof ServerLevel && EnchantmentHelper.hasChanneling(this.getPickupItem())) {
-            LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(this.level());
-            if (lightningbolt != null) {
-                lightningbolt.moveTo(Vec3.atBottomCenterOf(this.blockPosition()));
-                this.level().addFreshEntity(lightningbolt);
+        if (Config.IMPALING_PIERCE.get()){
+            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.IMPALING,this.getPickupItem())>0) {
+                this.dealtDamage = false;
+                this.setDeltaMovement(this.getDeltaMovement().multiply(-100, -10, -100));
             }
         }
+
+        if (Config.CHANNELING_UNIVERSAL.get()) {
+            if (this.level() instanceof ServerLevel && EnchantmentHelper.hasChanneling(this.getPickupItem())) {
+                LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(this.level());
+                if (lightningbolt != null) {
+                    lightningbolt.moveTo(Vec3.atBottomCenterOf(this.blockPosition()));
+                    this.level().addFreshEntity(lightningbolt);
+                }
+            }
+        }
+
     }
 
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     private void removeLoyalty(CallbackInfo ci) {
-        super.tick();
-        ci.cancel();
+        if (Config.LOYALTY_LOYAL.get()) {
+            super.tick();
+            ci.cancel();
+        }
     }
 
 }
