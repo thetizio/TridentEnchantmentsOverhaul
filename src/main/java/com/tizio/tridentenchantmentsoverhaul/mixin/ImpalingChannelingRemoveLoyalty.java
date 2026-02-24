@@ -1,5 +1,6 @@
 package com.tizio.tridentenchantmentsoverhaul.mixin;
 
+import com.tizio.tridentenchantmentsoverhaul.config.Config;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
@@ -28,24 +29,31 @@ public abstract class ImpalingChannelingRemoveLoyalty extends PersistentProjecti
 
     @Inject(at = @At("TAIL"), method = "onEntityHit")
     private void impalingChanneling(EntityHitResult entityHitResult, CallbackInfo ci) {
-        if(EnchantmentHelper.getLevel(Enchantments.IMPALING,this.asItemStack())>0) {
-            this.dealtDamage = false;
-            this.setVelocity(this.getVelocity().multiply(-100, -10, -100));
+
+        if (Boolean.parseBoolean(Config.values.get("impalingPierce"))) {
+            if (EnchantmentHelper.getLevel(Enchantments.IMPALING, this.asItemStack()) > 0) {
+                this.dealtDamage = false;
+                this.setVelocity(this.getVelocity().multiply(-100, -10, -100));
+            }
         }
 
-        if (this.getWorld() instanceof ServerWorld && EnchantmentHelper.hasChanneling(this.asItemStack())) {
-            LightningEntity lightningEntity = (LightningEntity)EntityType.LIGHTNING_BOLT.create(this.getWorld());
-            if (lightningEntity != null) {
-                lightningEntity.refreshPositionAfterTeleport(Vec3d.ofBottomCenter(entityHitResult.getEntity().getBlockPos()));
-                this.getWorld().spawnEntity(lightningEntity);
+        if (Boolean.parseBoolean(Config.values.get("channelingUniversal"))) {
+            if (this.getWorld() instanceof ServerWorld && EnchantmentHelper.hasChanneling(this.asItemStack())) {
+                LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(this.getWorld());
+                if (lightningEntity != null) {
+                    lightningEntity.refreshPositionAfterTeleport(Vec3d.ofBottomCenter(entityHitResult.getEntity().getBlockPos()));
+                    this.getWorld().spawnEntity(lightningEntity);
+                }
             }
         }
     }
 
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     private void removeLoyalty(CallbackInfo ci) {
-        super.tick();
-        ci.cancel();
+        if (Boolean.parseBoolean(Config.values.get("loyaltyInventory"))) {
+            super.tick();
+            ci.cancel();
+        }
     }
 
 }

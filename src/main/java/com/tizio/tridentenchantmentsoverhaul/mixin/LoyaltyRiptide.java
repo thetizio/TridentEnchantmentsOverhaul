@@ -1,5 +1,6 @@
 package com.tizio.tridentenchantmentsoverhaul.mixin;
 
+import com.tizio.tridentenchantmentsoverhaul.config.Config;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -31,15 +32,23 @@ public abstract class LoyaltyRiptide extends Item implements Vanishable {
 
         if (user instanceof PlayerEntity playerEntity) {
             if (!world.isClient) {
-                if (EnchantmentHelper.getLoyalty(stack) > 0) {
+                int loyaltyLevel = EnchantmentHelper.getLoyalty(stack);
+                if (loyaltyLevel > 0) {
                     if(this.getMaxUseTime(stack) - remainingUseTicks >= 10) {
                         stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(user.getActiveHand()));
                         TridentEntity tridentEntity = new TridentEntity(world, playerEntity, stack);
-                        tridentEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, 2.5F, 1.0F);
-                        tridentEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+                        tridentEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F,
+                            2.5F+Float.parseFloat(Config.values.get("loyaltyThrow")),
+                            1.0F-Float.parseFloat(Config.values.get("loyaltyInaccuracyDecrease"))*loyaltyLevel>0? 1.0F-Float.parseFloat(Config.values.get("loyaltyInaccuracyDecrease"))*loyaltyLevel : 0);
+                        if (Boolean.parseBoolean(Config.values.get("loyaltyInventory")) || playerEntity.getAbilities().creativeMode) {
+                            tridentEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+                        }
 
                         world.spawnEntity(tridentEntity);
                         world.playSoundFromEntity((PlayerEntity)null, tridentEntity, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                        if (!Boolean.parseBoolean(Config.values.get("loyaltyInventory")) && !playerEntity.getAbilities().creativeMode) {
+                            playerEntity.getInventory().removeOne(stack);
+                        }
                     }
                     ci.cancel();
                 }
@@ -50,14 +59,16 @@ public abstract class LoyaltyRiptide extends Item implements Vanishable {
     @Inject(at = @At("TAIL"), method = "onStoppedUsing")
     private void riptide(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info) {
 
-        if (user instanceof PlayerEntity playerEntity) {
-            if (this.getMaxUseTime(stack) - remainingUseTicks >= 10) {
-                if (playerEntity.isTouchingWaterOrRain()) {
-                    if (EnchantmentHelper.getRiptide(stack) > 0) playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,100,0));
+        if (Boolean.parseBoolean(Config.values.get("riptideSlowFalling"))) {
+            if (user instanceof PlayerEntity playerEntity) {
+                if (this.getMaxUseTime(stack) - remainingUseTicks >= 10) {
+                    if (playerEntity.isTouchingWaterOrRain()) {
+                        if (EnchantmentHelper.getRiptide(stack) > 0)
+                            playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, Integer.parseInt(Config.values.get("riptideDuration"))*20, 0));
+                    }
                 }
             }
         }
-
     }
 
 }
