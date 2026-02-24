@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,8 +94,14 @@ public class Config {
             values.put(c.id,c.value);
         }
 
-        File test = new File("config/tridentenchantmentsoverhaul.toml");
-        if (!test.exists()){
+        if (!Files.exists(Path.of("config/tridentenchantmentsoverhaul.toml"))){
+            if (!Files.exists(Path.of("config"))){
+                try{
+                    Files.createDirectory(Path.of("config"));
+                }catch(Exception e){
+                    LOGGER.info("something went wrong while creating config folder");
+                }
+            }
             try(BufferedWriter writer = new BufferedWriter(new FileWriter("config/tridentenchantmentsoverhaul.toml"));){
                 for(ConfigComponent c: components){
                     write(writer,c);
