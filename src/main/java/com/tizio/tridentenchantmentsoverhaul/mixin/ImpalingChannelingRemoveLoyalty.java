@@ -30,14 +30,14 @@ public abstract class ImpalingChannelingRemoveLoyalty extends PersistentProjecti
     @Inject(at = @At("TAIL"), method = "onEntityHit")
     private void impalingChanneling(EntityHitResult entityHitResult, CallbackInfo ci) {
 
-        if (Config.getBoolean("impalingPierce")) {
+        if (Config.impalingPierce) {
             if (EnchantmentHelper.getLevel(Enchantments.IMPALING, this.asItemStack()) > 0) {
                 this.dealtDamage = false;
                 this.setVelocity(this.getVelocity().multiply(-100, -10, -100));
             }
         }
 
-        if (Config.getBoolean("channelingUniversal")) {
+        if (Config.channelingUniversal) {
             if (this.getWorld() instanceof ServerWorld && EnchantmentHelper.hasChanneling(this.asItemStack())) {
                 LightningEntity lightningEntity = (LightningEntity) EntityType.LIGHTNING_BOLT.create(this.getWorld());
                 if (lightningEntity != null) {
@@ -50,7 +50,7 @@ public abstract class ImpalingChannelingRemoveLoyalty extends PersistentProjecti
 
     @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
     private void removeLoyalty(CallbackInfo ci) {
-        if (Config.getBoolean("loyaltyInventory")) {
+        if (Config.loyaltyInventory) {
             super.tick();
             ci.cancel();
         }

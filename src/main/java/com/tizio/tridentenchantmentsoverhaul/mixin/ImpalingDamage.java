@@ -13,9 +13,9 @@ public class ImpalingDamage {
 
     @Inject(at = @At("HEAD"), method = "getAttackDamage", cancellable = true)
     public void getAttackDamage(int level, EntityGroup group, CallbackInfoReturnable<Float> cir) {
-        if (Config.getBoolean("impalingUniversal")){
-            cir.setReturnValue(Config.getFloat("impalingDamage")*level);
-        } else cir.setReturnValue(group == EntityGroup.AQUATIC ? Config.getFloat("impalingDamage")*level : 0.0F);
+        if (Config.impalingUniversal){
+            cir.setReturnValue(Config.impalingDamage*level);
+        } else cir.setReturnValue(group == EntityGroup.AQUATIC ? Config.impalingDamage*level : 0.0F);
     }
 
 }
