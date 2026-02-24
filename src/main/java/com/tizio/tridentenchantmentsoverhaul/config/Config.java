@@ -16,10 +16,22 @@ public class Config {
 
     public static Map<String,String> values = new HashMap<String,String>();
 
+    public static Boolean getBoolean(String config){
+        return Boolean.parseBoolean(values.get(config));
+    }
+
+    public static Float getFloat(String config){
+        return Float.parseFloat(values.get(config));
+    }
+
+    public static Integer getInteger(String config){
+        return Integer.parseInt(values.get(config));
+    }
+
     public static void write(BufferedWriter b, ConfigComponent c){
         try{
             b.write("#"+c.desc.replace("\n","\n#")+"\n"+
-            c.id+" = "+c.value+"\n");
+                    c.id+" = "+c.value+"\n");
         }catch(Exception e){
             LOGGER.info("something went wrong while writing configs "+e.getMessage());
         }
@@ -43,7 +55,7 @@ public class Config {
         ));
         components.add(new ConfigComponent(
                 "How much should impaling increase damage each level?\n" +
-                "Should likely be [0.0,100.0]",
+                        "Should likely be [0.0,100.0]",
                 "impalingDamage",
                 "1.0"
         ));
@@ -59,16 +71,16 @@ public class Config {
         ));
         components.add(new ConfigComponent(
                 "How much should loyalty boost trident throw strength each level? (0=vanilla)\n" +
-                "Should likely be [-1.0,1.0]",
+                        "Should likely be [-1.0,1.0]",
                 "loyaltyThrow",
                 "0.0"
         ));
         components.add(new ConfigComponent(
                 "How much should loyalty boost trident throw accuracy each level? (0=vanilla)\n" +
-                "Default vanilla inaccuracy is 1, values <= 0 mean perfect accuracy\n" +
-                "Example with 0.3 and loyalty 3 -> 1 - 0.3 * 3 = 0.1 total inaccuracy left\n" +
-                "Example with -0.2 and loyalty 3 -> 1 - (-0.2 * 3) = 1.6 total inaccuracy left (more than vanilla)\n" +
-                "Should likely be [-1.0,1.0]",
+                        "Default vanilla inaccuracy is 1, values <= 0 mean perfect accuracy\n" +
+                        "Example with 0.3 and loyalty 3 -> 1 - 0.3 * 3 = 0.1 total inaccuracy left\n" +
+                        "Example with -0.2 and loyalty 3 -> 1 - (-0.2 * 3) = 1.6 total inaccuracy left (more than vanilla)\n" +
+                        "Should likely be [-1.0,1.0]",
                 "loyaltyInaccuracyDecrease",
                 "0.0"
         ));
@@ -79,7 +91,7 @@ public class Config {
         ));
         components.add(new ConfigComponent(
                 "How long should slow falling from riptide last in seconds? (irrelevant if riptideSlowFalling=false)\n" +
-                "Should likely be [1,60]",
+                        "Should likely be [1,60]",
                 "riptideDuration",
                 "5"
         ));
