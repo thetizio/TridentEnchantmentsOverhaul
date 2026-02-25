@@ -1,5 +1,6 @@
 package com.tizio.tridentenchantmentsoverhaul.mixin;
 
+import com.tizio.tridentenchantmentsoverhaul.config.Config;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EntityType;
@@ -26,11 +27,22 @@ public abstract class Impaling extends PersistentProjectileEntity {
 
     @Inject(at = @At("TAIL"), method = "onEntityHit")
     private void init(EntityHitResult entityHitResult, CallbackInfo ci) {
-        World world = this.getWorld();
-        int enchantmentLevel = EnchantmentHelper.getLevel((RegistryEntry<net.minecraft.enchantment.Enchantment>) world.getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.IMPALING),this.asItemStack());
-        if(enchantmentLevel>0) {
-            this.dealtDamage = false;
-            this.setVelocity(this.getVelocity().multiply(-100, -10, -100));
+        if (Config.impalingPierce) {
+            World world = this.getWorld();
+            int enchantmentLevel = EnchantmentHelper.getLevel((RegistryEntry<net.minecraft.enchantment.Enchantment>) world.getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.IMPALING), this.asItemStack());
+            if (enchantmentLevel > 0) {
+                this.dealtDamage = false;
+                this.setVelocity(this.getVelocity().multiply(-100, -10, -100));
+            }
         }
     }
+
+    @Inject(at = @At("HEAD"), method = "tick", cancellable = true)
+    private void removeLoyalty(CallbackInfo ci) {
+        if (Config.loyaltyInventory) {
+            super.tick();
+            ci.cancel();
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.tizio.tridentenchantmentsoverhaul.mixin;
 
+import com.tizio.tridentenchantmentsoverhaul.config.Config;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -36,16 +37,24 @@ public abstract class LoyaltyRiptide extends Item implements ProjectileItem {
 
 		if (user instanceof PlayerEntity playerEntity) {
 			if (!world.isClient) {
-				if (EnchantmentHelper.getLevel((RegistryEntry<net.minecraft.enchantment.Enchantment>) world.getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.LOYALTY),stack) > 0) {
+				int loyaltyLevel = EnchantmentHelper.getLevel((RegistryEntry<net.minecraft.enchantment.Enchantment>) world.getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT).getOrThrow(Enchantments.LOYALTY),stack);
+				if (loyaltyLevel > 0) {
 					if(this.getMaxUseTime(stack, user) - remainingUseTicks >= 10) {
 						stack.damage(1, playerEntity, LivingEntity.getSlotForHand(user.getActiveHand()));
 						TridentEntity tridentEntity = new TridentEntity(world, playerEntity, stack);
-						tridentEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, 2.5F, 1.0F);
-						tridentEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+						tridentEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F,
+							2.5F+Config.loyaltyThrow,
+							1.0F-Config.loyaltyInaccuracyDecrease*loyaltyLevel>0? 1.0F-Config.loyaltyInaccuracyDecrease*loyaltyLevel : 0);
+						if (Config.loyaltyInventory || playerEntity.isInCreativeMode()) {
+							tridentEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+						}
 
 						world.spawnEntity(tridentEntity);
 						RegistryEntry<SoundEvent> registryEntry = (RegistryEntry)EnchantmentHelper.getEffect(stack, EnchantmentEffectComponentTypes.TRIDENT_SOUND).orElse(SoundEvents.ITEM_TRIDENT_THROW);
 						world.playSoundFromEntity((PlayerEntity) null, tridentEntity, (SoundEvent) registryEntry.value(), SoundCategory.PLAYERS, 1.0F, 1.0F);
+						if (!Config.loyaltyInventory && !playerEntity.isInCreativeMode()) {
+							playerEntity.getInventory().removeOne(stack);
+						}
 					}
 					info.cancel();
 				}
@@ -56,10 +65,13 @@ public abstract class LoyaltyRiptide extends Item implements ProjectileItem {
 	@Inject(at = @At("TAIL"), method = "onStoppedUsing")
 	private void riptide(ItemStack stack, World world, LivingEntity user, int remainingUseTicks, CallbackInfo info) {
 
-		if (user instanceof PlayerEntity playerEntity) {
-			if (this.getMaxUseTime(stack, user) - remainingUseTicks >= 10) {
-				if (playerEntity.isTouchingWaterOrRain()) {
-					if (EnchantmentHelper.getTridentSpinAttackStrength(stack, playerEntity) > 0) playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING,100,0));
+		if (Config.riptideSlowFalling) {
+			if (user instanceof PlayerEntity playerEntity) {
+				if (this.getMaxUseTime(stack, user) - remainingUseTicks >= 10) {
+					if (playerEntity.isTouchingWaterOrRain()) {
+						if (EnchantmentHelper.getTridentSpinAttackStrength(stack, playerEntity) > 0)
+							playerEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, Config.riptideDuration*20, 0));
+					}
 				}
 			}
 		}
