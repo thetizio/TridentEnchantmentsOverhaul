@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class ConfigController {
 
-    ArrayList<ConfigComponent> list;
+    ArrayList<String> list;
     Set<String> set;
 
     public ConfigController(){
@@ -16,22 +16,26 @@ public class ConfigController {
 
     }
 
-    public Boolean addBoolean(ConfigComponent c){
-        this.list.add(c);
-        this.set.add(c.id);
-        return Boolean.parseBoolean(c.value);
+    private void addListSet(String desc, String id, Object value){
+        this.list.add(desc);
+        this.list.add(id);
+        this.list.add(value.toString());
+        this.set.add(id);
     }
 
-    public Float addFloat(ConfigComponent c){
-        this.list.add(c);
-        this.set.add(c.id);
-        return Float.parseFloat(c.value);
+    public Boolean addBoolean(String desc, String id, Boolean value){
+        addListSet(desc, id, value);
+        return value;
     }
 
-    public Integer addInteger(ConfigComponent c){
-        this.list.add(c);
-        this.set.add(c.id);
-        return Integer.parseInt(c.value);
+    public Float addFloat(String desc, String id, Float value){
+        addListSet(desc, id, value);
+        return value;
+    }
+
+    public Integer addInteger(String desc, String id, Integer value){
+        addListSet(desc, id, value);
+        return value;
     }
 
 }
