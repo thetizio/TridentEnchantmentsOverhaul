@@ -42,6 +42,10 @@ public class Config{
             .comment("How long should slow falling from riptide last in seconds? (irrelevant if riptideSlowFalling=false)")
             .defineInRange("riptideDuration",5,1,60);
 
+    public static final ForgeConfigSpec.BooleanValue RIPTIDE_UNIVERSAL = BUILDER
+            .comment("Should players be able to use riptide outside water?")
+            .define("riptideUniversal", true);
+
     public static final ForgeConfigSpec.BooleanValue CHANNELING_UNIVERSAL = BUILDER
             .comment("Should channeling always summon lightnings when hitting mobs?")
             .define("channelingUniversal", true);
