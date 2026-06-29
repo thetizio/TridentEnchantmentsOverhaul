@@ -138,7 +138,6 @@ public class Config {
 
         control.set.clear();
         control.list.clear();
-
     }
 
 }
