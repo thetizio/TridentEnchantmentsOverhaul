@@ -11,6 +11,5 @@ public class TridentEnchantmentsOverhaul implements ModInitializer {
 	public void onInitialize() {
 
 		Config.initialize();
-
 	}
 }
