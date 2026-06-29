@@ -57,6 +57,12 @@ public class Config {
             5
     );
 
+    public static Boolean riptideUniversal = control.addBoolean(
+            "Should players be able to use riptide outside water?",
+            "riptideUniversal",
+            true
+    );
+
     public static void modifyConfig(String name, String value) {
 
         Object x;
