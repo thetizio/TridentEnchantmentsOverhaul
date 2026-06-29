@@ -70,6 +70,12 @@ public class Config {
             5
     );
 
+    public static Boolean riptideUniversal = control.addBoolean(
+            "Should players be able to use riptide outside water?",
+            "riptideUniversal",
+            true
+    );
+
     public static Boolean channelingUniversal = control.addBoolean(
             "Should channeling always summon lightnings when hitting mobs?",
             "channelingUniversal",
