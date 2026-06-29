@@ -37,7 +37,7 @@ public abstract class LoyaltyRiptide extends Item implements ProjectileItem {
 
         if (entityLiving instanceof Player player) {
             if (level instanceof ServerLevel) {
-                int loyaltyLevel = EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().getOrThrow(Enchantments.LOYALTY),stack);git init
+                int loyaltyLevel = EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().getOrThrow(Enchantments.LOYALTY),stack);
                 if (loyaltyLevel > 0) {
                     if(this.getUseDuration(stack, player) - timeLeft >= 10) {
                         stack.hurtAndBreak(1, player, entityLiving.getUsedItemHand());
