@@ -77,5 +77,4 @@ public abstract class LoyaltyRiptide extends Item implements Vanishable {
         if (Config.RIPTIDE_UNIVERSAL.get()) return true;
         else return player.isInWaterOrRain();
     }
-
 }
