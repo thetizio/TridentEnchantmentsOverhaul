@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.tizio.tridentenchantmentsoverhaul.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "Impaling",
+    "LoyaltyRiptide"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
