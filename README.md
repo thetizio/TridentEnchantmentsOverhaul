@@ -9,8 +9,8 @@ This mod enhances tridents by modifying how enchantments work:
 4) channeling: lightning on the target will always spawn, regardless of any condition
 
 If you are <ins>playing in 1.20.1</ins>, you can change features individually through config:
--if impaling should increase damage against every mob ---- default true
--how much impaling should increase damage ---- default 1.0
+- if impaling should increase damage against every mob ---- default true
+- how much impaling should increase damage ---- default 1.0
 -if impaling should make the trident pierce through mobs --- default true
 -if loyalty should make trident stay in your inventory --- default true
 -how much loyalty increases trident throw strength --- default 0.0
